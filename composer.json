@@ -1,0 +1,8 @@
+{
+	"name": "onilab/google_charts",
+	"version": "0.0.1",
+	"type": "magento-module",
+	"require": {
+		"magento-hackathon/magento-composer-installer": "*"
+	}
+}
