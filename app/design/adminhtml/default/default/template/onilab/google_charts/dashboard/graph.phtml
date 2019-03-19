@@ -39,6 +39,7 @@
     <?php if ($this->getCount()): ?>
         <?php $elementId = uniqid('onilab_googlechart_dashboard_graph_') ?>
         <p id="<?php echo $elementId ?>" style="<?php echo $_containerStyle ?>"></p>
+        <span style="text-align: center; display: block"><?php echo $this->__('Check for updates at ') ?> <a href="https://github.com/onilab/magento-1-google-api-chart-fix" target="_blank">GitHub</a></span>
         <script type="application/javascript">
             <?php list($datas, $dateList, $dataIndex) = $this->getChartData() ?>
             <?php
@@ -49,36 +50,61 @@
                 $preparedRows[] = [$dateList[$i], $data[$i]];
             }
             $rowsJson = json_encode($preparedRows);
-            $maxVAxisValue = max(array_map(function ($row) {
-                return $row[1];
-            }, $preparedRows));
-            $vAxisMinValue = $maxVAxisValue + floor($maxVAxisValue / 100 * 20);
             ?>
             (function () {
-                var data = <?php echo $rowsJson ?>;
+                var select = document.getElementById('order_orders_period'),
+                    selectValue = select.value,
+                    dateFormat = 'hh:mm a',
+                    gridlines = 8;
+                if (select) {
+                    if (select.value === '7d') {
+                        gridlines = 4;
+                        dateFormat = 'E';
+                    }
+                    if (select.value === '1m') {
+                        dateFormat = 'dd MMM';
+                    }
+                    if (select.value === '1y' || select.value === '2y') {
+                        dateFormat = 'MMM YYYY';
+                    }
+                }
+                var data = <?php echo $rowsJson ?>,
+                    ticks = [];
                 for (var i = 0; i < data.length; i++) {
                     if (data[i][0] > 0) {
                         data[i][0] = new Date(data[i][0] * 1000 + (new Date()).getTimezoneOffset() * 60 * 1000);
+                        ticks.push(data[i][0]);
                     }
+                }
+                var config = {
+                    width: <?php echo $this->getWidth() ?>,
+                    height: <?php echo $this->getHeight() ?>,
+                    colors: ['#EA7601', 'red'],
+                    legend: 'none',
+                    chartArea: {width: '90%', height: '80%'},
+                    vAxis: {
+                        gridlines: {color: '#e6e6e6'},
+                        baselineColor: '#e6e6e6',
+                        format: '0'
+                    },
+                    hAxis: {
+                        gridlines: {
+                            color: '#e6e6e6',
+                            count: gridlines
+                        },
+                        baselineColor: '#e6e6e6',
+                        format: dateFormat
+                    },
+                    backgroundColor: {stroke: '#e6e6e6'}
+                };
+                if (selectValue === '1y') {
+                    config.hAxis.ticks = ticks;
                 }
                 var init = function () {
                     onilabGoogleCharts.createChart('<?php echo $elementId ?>', [
                         ['datetime', 'Time'],
                         ['number', '<?php echo $this->getTitle() ?>']
-                    ], data, {
-                        width: <?php echo $this->getWidth() ?>,
-                        height: <?php echo $this->getHeight() ?>,
-                        colors: ['#EA7601', 'red'],
-                        legend: 'none',
-                        chartArea: {width: '90%', height: '80%'},
-                        vAxis: {
-                            minValue: <?php echo $vAxisMinValue ?>,
-                            gridlines: {color: '#e6e6e6'},
-                            baselineColor: '#e6e6e6'
-                        },
-                        hAxis: {gridlines: {color: '#e6e6e6'}, baselineColor: '#e6e6e6'},
-                        backgroundColor: {stroke: '#e6e6e6'}
-                    });
+                    ], data, config);
                 };
                 if (window.onilabGoogleCharts) {
                     init();
