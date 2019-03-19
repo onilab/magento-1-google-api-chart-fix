@@ -1,0 +1,89 @@
+<?php
+/**
+ * Magento Enterprise Edition
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Magento Enterprise Edition End User License Agreement
+ * that is bundled with this package in the file LICENSE_EE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.magento.com/license/enterprise-edition
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magento.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magento.com for more information.
+ *
+ * @category    design
+ * @package     default_default
+ * @copyright Copyright (c) 2006-2018 Magento, Inc. (http://www.magento.com)
+ * @license http://www.magento.com/license/enterprise-edition
+ */
+?>
+<div style="margin:20px;">
+    <p class="switcher a-right" style="padding:5px 10px;"><?php echo $this->__('Select Range') ?>:
+        <select name="period" id="order_<?php echo $this->getHtmlId() ?>_period" onchange="changeDiagramsPeriod(this);">
+            <?php foreach ($this->helper('adminhtml/dashboard_data')->getDatePeriods() as $_value => $_label): ?>
+                <?php if (in_array($_value, array('custom'))) continue; ?>
+                <option value="<?php echo $_value ?>" <?php if ($this->getRequest()->getParam('period') == $_value): ?> selected="selected"<?php endif; ?>><?php echo $_label ?></option>
+            <?php endforeach; ?>
+        </select></p>
+    <br/>
+    <?php
+    $_containerStyle = "width:{$this->getWidth()}px;height:{$this->getHeight()}px; margin:0 auto;";
+    ?>
+    <?php if ($this->getCount()): ?>
+        <?php $elementId = uniqid('onilab_googlechart_dashboard_graph_') ?>
+        <p id="<?php echo $elementId ?>" style="<?php echo $_containerStyle ?>"></p>
+        <script type="application/javascript">
+            <?php list($datas, $dateList, $dataIndex) = $this->getChartData() ?>
+            <?php
+            $data = array_pop($datas);
+            $rowsCount = count($data);
+            $preparedRows = [];
+            for ($i = 0; $i < $rowsCount; $i++) {
+                $preparedRows[] = [$dateList[$i], $data[$i]];
+            }
+            $rowsJson = json_encode($preparedRows);
+            $maxVAxisValue = max(array_map(function ($row) {
+                return $row[1];
+            }, $preparedRows));
+            $vAxisMinValue = $maxVAxisValue + floor($maxVAxisValue / 100 * 20);
+            ?>
+            (function () {
+                var data = <?php echo $rowsJson ?>;
+                for (var i = 0; i < data.length; i++) {
+                    data[i][0] = new Date(data[i][0] * 1000);
+                }
+                var init = function () {
+                    onilabGoogleCharts.createChart('<?php echo $elementId ?>', [
+                        ['datetime', 'Time'],
+                        ['number', '<?php echo $this->getTitle() ?>']
+                    ], data, {
+                        width: <?php echo $this->getWidth() ?>,
+                        height: <?php echo $this->getHeight() ?>,
+                        colors: ['#EA7601', 'red'],
+                        legend: 'none',
+                        chartArea: {width: '90%', height: '80%'},
+                        vAxis: { minValue: <?php echo $vAxisMinValue ?>, gridlines: { color: '#e6e6e6'}, baselineColor: '#e6e6e6' },
+                        hAxis: { gridlines: { color: '#e6e6e6'}, baselineColor: '#e6e6e6' },
+                        backgroundColor: { stroke: '#e6e6e6' }
+                    });
+                };
+                if (window.onilabGoogleCharts) {
+                    init();
+                } else {
+                    setTimeout(function () {
+                        init();
+                    }, 100);
+                }
+            })();
+        </script>
+    <?php else: ?>
+        <p class="a-center" style="<?php echo $_containerStyle ?>"><?php echo $this->__('No Data Found') ?></p>
+    <?php endif; ?>
+</div>

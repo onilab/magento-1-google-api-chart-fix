@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<layout>
+    <adminhtml_dashboard_index>
+        <reference name="before_body_end">
+            <block type="core/text" name="google_charts_external_js">
+                <action method="addText">
+                    <text>
+                        <![CDATA[<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>]]>
+                    </text>
+                </action>
+            </block>
+            <block type="core/template" template="onilab/google_charts/scripts.phtml"/>
+        </reference>
+    </adminhtml_dashboard_index>
+</layout>

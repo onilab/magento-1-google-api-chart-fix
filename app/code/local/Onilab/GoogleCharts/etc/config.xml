@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Onilab_GoogleCharts>
+            <version>0.0.1</version>
+        </Onilab_GoogleCharts>
+    </modules>
+    <global>
+        <helpers>
+            <onilab_googlecharts>
+                <class>Onilab_GoogleCharts_Helper</class>
+            </onilab_googlecharts>
+        </helpers>
+        <blocks>
+            <adminhtml>
+                <rewrite>
+                    <dashboard_graph>Onilab_GoogleCharts_Block_Adminhtml_Dashboard_Graph</dashboard_graph>
+                    <dashboard_tab_orders>Onilab_GoogleCharts_Block_Adminhtml_Dashboard_Tab_Orders</dashboard_tab_orders>
+                    <dashboard_tab_amounts>Onilab_GoogleCharts_Block_Adminhtml_Dashboard_Tab_Amounts</dashboard_tab_amounts>
+                </rewrite>
+            </adminhtml>
+            <onilab_googlecharts>
+                <class>Onilab_GoogleCharts_Block</class>
+            </onilab_googlecharts>
+        </blocks>
+    </global>
+    <adminhtml>
+        <layout>
+            <updates>
+                <onilab_googlecharts>
+                    <file>onilab/google_charts.xml</file>
+                </onilab_googlecharts>
+            </updates>
+        </layout>
+    </adminhtml>
+</config>
