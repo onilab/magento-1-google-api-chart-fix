@@ -67,6 +67,6 @@ class Onilab_GoogleCharts_Block_Adminhtml_Dashboard_Graph extends Mage_Adminhtml
             $dates[] = strtotime($d);
         }
 
-        return [$datas, $dates, $this->_allSeries[0]];
+        return [$datas, $dates];
     }
 }

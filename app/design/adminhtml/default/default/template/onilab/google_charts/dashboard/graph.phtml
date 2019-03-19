@@ -41,7 +41,7 @@
         <p id="<?php echo $elementId ?>" style="<?php echo $_containerStyle ?>"></p>
         <span style="text-align: center; display: block"><?php echo $this->__('Check for updates at ') ?> <a href="https://github.com/onilab/magento-1-google-api-chart-fix" target="_blank">GitHub</a></span>
         <script type="application/javascript">
-            <?php list($datas, $dateList, $dataIndex) = $this->getChartData() ?>
+            <?php list($datas, $dateList) = $this->getChartData() ?>
             <?php
             $data = array_pop($datas);
             $rowsCount = count($data);
