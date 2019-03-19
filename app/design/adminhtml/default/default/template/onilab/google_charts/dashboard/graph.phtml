@@ -106,12 +106,9 @@
                         ['number', '<?php echo $this->getTitle() ?>']
                     ], data, config);
                 };
+                document.addEventListener('onilab-google-charts-ready', init);
                 if (window.onilabGoogleCharts) {
                     init();
-                } else {
-                    setTimeout(function () {
-                        init();
-                    }, 100);
                 }
             })();
         </script>
